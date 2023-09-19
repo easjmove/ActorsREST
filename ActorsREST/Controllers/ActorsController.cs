@@ -24,18 +24,41 @@ namespace ActorsREST.Controllers
         }
 
         // GET api/<ActorsController>/5
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status418ImATeapot)]
         [HttpGet]
         [Route("{id}")]
-        public Actor? GetById(int id)
+        public ActionResult<Actor> GetById(string id)
         {
-            return _actorsRepository.GetById(id);
+            if (!int.TryParse(id, out int actorId))
+            {
+                return StatusCode(StatusCodes.Status418ImATeapot);
+            }
+            Actor? actor = _actorsRepository.GetById(actorId);
+            if (actor == null) return NotFound();
+            return Ok(actor);
         }
 
         // POST api/<ActorsController>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public Actor Post([FromBody] Actor newActor)
+        public ActionResult<Actor> Post([FromBody] Actor newActor)
         {
-            return _actorsRepository.Add(newActor);
+            try
+            {
+                Actor addedActor = _actorsRepository.Add(newActor);
+                return Created("/" + addedActor.Id,addedActor);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT api/<ActorsController>/5
