@@ -1,4 +1,5 @@
 ﻿using ActorRepositoryLib;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ActorsREST.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("AllowAll")]
     [ApiController]
     public class ActorsController : ControllerBase
     {
@@ -27,6 +29,7 @@ namespace ActorsREST.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status418ImATeapot)]
+        [EnableCors("OnlyZealand")]
         [HttpGet]
         [Route("{id}")]
         public ActionResult<Actor> GetById(string id)
