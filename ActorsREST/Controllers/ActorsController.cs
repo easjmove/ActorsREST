@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ActorsREST.Controllers
 {
     [Route("api/[controller]")]
-    [EnableCors("AllowAll")]
+    [EnableCors(PolicyNames.OnlyZealand)]
     [ApiController]
     public class ActorsController : ControllerBase
     {
@@ -18,7 +18,7 @@ namespace ActorsREST.Controllers
             _actorsRepository = actorsRepository;
         }
 
-        // GET: api/<ActorsController>
+        // GET: api/Actors
         [HttpGet]
         public IEnumerable<Actor> Get()
         {
@@ -29,7 +29,7 @@ namespace ActorsREST.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status418ImATeapot)]
-        [EnableCors("OnlyZealand")]
+        [EnableCors(PolicyNames.AllowAllPolicy)]
         [HttpGet]
         [Route("{id}")]
         public ActionResult<Actor> GetById(string id)

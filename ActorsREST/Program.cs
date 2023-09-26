@@ -1,19 +1,20 @@
 using ActorRepositoryLib;
+using ActorsREST;
 using Microsoft.EntityFrameworkCore;
 
-var AllowAllPolicy = "AllowAll";
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors(options => {
-    options.AddPolicy(name: AllowAllPolicy, policy =>
+    options.AddPolicy(name: PolicyNames.AllowAllPolicy, policy =>
     {
         policy.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader();
     });
-    options.AddPolicy(name: "OnlyZealand", policy =>
+    options.AddPolicy(name: PolicyNames.OnlyZealand, policy =>
     {
         policy.WithOrigins("http://zealand.dk"
             , "https://zealand.dk")
@@ -24,6 +25,9 @@ builder.Services.AddCors(options => {
 
 
 builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 bool useSql = false;
 if (useSql)
@@ -43,7 +47,10 @@ else
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseCors(AllowAllPolicy);
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors(PolicyNames.AllowAllPolicy);
 
 app.UseAuthorization();
 
