@@ -32,10 +32,13 @@ namespace ActorsREST.Controllers
         [EnableCors(PolicyNames.AllowAllPolicy)]
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Actor> GetById(string id)
+        public ActionResult<Actor> GetById([FromHeader] string color
+            , string id)
         {
             if (!int.TryParse(id, out int actorId))
             {
+
+                Response.Headers.Add("Volume","1l");
                 return StatusCode(StatusCodes.Status418ImATeapot);
             }
             Actor? actor = _actorsRepository.GetById(actorId);
