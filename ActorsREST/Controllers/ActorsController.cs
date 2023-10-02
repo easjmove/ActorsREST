@@ -20,9 +20,25 @@ namespace ActorsREST.Controllers
 
         // GET: api/Actors
         [HttpGet]
-        public IEnumerable<Actor> Get()
+        public ActionResult<IEnumerable<Actor>> Get(
+            [FromHeader] string? amount,
+            [FromQuery] string? nameFilter
+            )
         {
-            return _actorsRepository.Get();
+            int? parsedAmount = null;
+            if (amount != null)
+            {
+                if (int.TryParse(amount, out var tempParsedAmount))
+                {
+                    parsedAmount = tempParsedAmount;
+                } else
+                {
+                    return BadRequest("Amount must be a integer");
+                }
+            }
+
+            return Ok(_actorsRepository.Get(nameFilter,
+                null, null, parsedAmount));
         }
 
         // GET api/<ActorsController>/5
@@ -38,7 +54,7 @@ namespace ActorsREST.Controllers
             if (!int.TryParse(id, out int actorId))
             {
 
-                Response.Headers.Add("Volume","1l");
+                Response.Headers.Add("Volume", "1l");
                 return StatusCode(StatusCodes.Status418ImATeapot);
             }
             Actor? actor = _actorsRepository.GetById(actorId);
@@ -55,7 +71,7 @@ namespace ActorsREST.Controllers
             try
             {
                 Actor addedActor = _actorsRepository.Add(newActor);
-                return Created("/" + addedActor.Id,addedActor);
+                return Created("/" + addedActor.Id, addedActor);
             }
             catch (ArgumentNullException ex)
             {
@@ -71,12 +87,12 @@ namespace ActorsREST.Controllers
         [HttpPut("{id}")]
         public Actor? Put(int id, [FromBody] Actor value)
         {
-           return _actorsRepository.Update(id, value);
+            return _actorsRepository.Update(id, value);
         }
 
         // DELETE api/<ActorsController>/5
         [HttpDelete("{id}")]
-        public Actor? Delete( int id)
+        public Actor? Delete(int id)
         {
             return _actorsRepository.Delete(id);
         }
