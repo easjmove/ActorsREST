@@ -18,7 +18,9 @@ namespace ActorsREST.Controllers
             _actorsRepository = actorsRepository;
         }
 
-        // GET: api/Actors
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        // GET: api/Actors?nameFilter=vin
         [HttpGet]
         public ActionResult<IEnumerable<Actor>> Get(
             [FromHeader] string? amount,
@@ -31,14 +33,23 @@ namespace ActorsREST.Controllers
                 if (int.TryParse(amount, out var tempParsedAmount))
                 {
                     parsedAmount = tempParsedAmount;
-                } else
+                }
+                else
                 {
                     return BadRequest("Amount must be a integer");
                 }
             }
 
-            return Ok(_actorsRepository.Get(nameFilter,
-                null, null, parsedAmount));
+            IEnumerable<Actor> result = _actorsRepository.Get(nameFilter,
+                null, null, parsedAmount);
+            if (result.Any())
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NoContent();
+            }
         }
 
         // GET api/<ActorsController>/5
@@ -48,7 +59,7 @@ namespace ActorsREST.Controllers
         [EnableCors(PolicyNames.AllowAllPolicy)]
         [HttpGet]
         [Route("{id}")]
-        public ActionResult<Actor> GetById([FromHeader] string color
+        public ActionResult<Actor> GetById([FromHeader] string? color
             , string id)
         {
             if (!int.TryParse(id, out int actorId))
