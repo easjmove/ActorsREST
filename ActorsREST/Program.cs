@@ -6,16 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors(options => {
-    options.AddPolicy(name: PolicyNames.AllowAllPolicy, policy =>
+    options.AddPolicy(name: "AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
-    options.AddPolicy(name: PolicyNames.OnlyZealand, policy =>
-    {
-        policy.WithOrigins("http://zealand.dk"
-            , "https://zealand.dk")
         .AllowAnyMethod()
         .AllowAnyHeader();
     });
@@ -45,11 +38,10 @@ else
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors(PolicyNames.OnlyZealand);
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
